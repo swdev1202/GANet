@@ -1,9 +1,9 @@
 # Argoverse dataset
-CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=16 \
+CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=4 \
                 --crop_height=240 \
                 --crop_width=528 \
                 --max_disp=192 \
-                --thread=8 \
+                --thread=4 \
                 --data_path='/home/011505052/argoverse-conv-data/KITTI/object/training/' \
                 --training_list='./lists/argo_train.list' \
                 --val_list='./lists/argo_val.list' \
@@ -14,11 +14,11 @@ CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=16 \
                 --nEpochs=800 2>&1 |tee logs/log_finetune_argo.txt
 
 
-CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=8 \
+CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=4 \
                 --crop_height=240 \
                 --crop_width=1248 \
                 --max_disp=192 \
-                --thread=16 \
+                --thread=4 \
                 --data_path='/home/011505052/argoverse-conv-data/KITTI/object/training/' \
                 --training_list='./lists/argo_train.list' \
                 --val_list='./lists/argo_val.list' \
