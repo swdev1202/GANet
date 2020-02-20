@@ -291,7 +291,7 @@ class DatasetFromList(data.Dataset):
             temp_data = load_kitti_data(self.data_path, self.file_list[index])
         elif self.kitti2015: #load kitti2015 dataset
             temp_data = load_kitti2015_data(self.data_path, self.file_list[index])
-        elif self.argo #load argo dataset
+        elif self.argo: #load argo dataset
             temp_data = load_argo_data(self.data_path, self.file_list[index])
         else: #load scene flow dataset
             temp_data = load_data(self.data_path, self.file_list[index])
