@@ -228,9 +228,15 @@ def load_kitti2015_data(file_path, current_file):
     return temp_data
 def load_argo_data(file_path, current_file):
     """ load current file from the list"""
+    # current_file has .png extension in default
     lft_img_path = file_path + 'image_2/' + current_file[0: len(current_file) - 1]
     rgt_img_path = file_path + 'image_3/' + current_file[0: len(current_file) - 1]
-    lft_disp_path = file_path + 'disparity/' + current_file[0: len(current_file) - 1]
+
+    # switch the .png extension to .npy
+    curr_file = current_file[0: len(current_file) - 1].split('.')[0]
+    print(curr_file)
+    curr_file = curr_file + '.npy'
+    lft_disp_path = file_path + 'disparity/' + curr_file
 
     left = Image.open(lft_img_path)
     right = Image.open(rgt_img_path)

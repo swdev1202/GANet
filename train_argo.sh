@@ -1,12 +1,12 @@
 # Argoverse dataset
 CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=16 \
                 --crop_height=240 \
-                --crop_width = 528 \
+                --crop_width=528 \
                 --max_disp=192 \
                 --thread=8 \
                 --data_path='/home/011505052/argoverse-conv-data/KITTI/object/training/' \
-                --training_list = './lists/argo_train.list' \
-                --val_list = './lists/argo_val.list' \
+                --training_list='./lists/argo_train.list' \
+                --val_list='./lists/argo_val.list' \
                 --save_path='./checkpoints/finetune_argo' \
                 --argo=1 \
                 --shift=3 \
