@@ -34,6 +34,7 @@ parser.add_argument('--seed', type=int, default=123, help='random seed to use. D
 parser.add_argument('--shift', type=int, default=0, help='random shift of left image. Default=0')
 parser.add_argument('--kitti', type=int, default=0, help='kitti dataset? Default=False')
 parser.add_argument('--kitti2015', type=int, default=0, help='kitti 2015? Default=False')
+parser.add_argument('--argo', type=int, default=0, help='argoverse dataset? Default=False')
 parser.add_argument('--data_path', type=str, default='/ssd1/zhangfeihu/data/stereo/', help="data root")
 parser.add_argument('--training_list', type=str, default='./lists/sceneflow_train.list', help="training list")
 parser.add_argument('--val_list', type=str, default='./lists/sceneflow_test_select.list', help="validation list")
@@ -60,8 +61,8 @@ if cuda:
     torch.cuda.manual_seed(opt.seed)
 
 print('===> Loading datasets')
-train_set = get_training_set(opt.data_path, opt.training_list, [opt.crop_height, opt.crop_width], opt.left_right, opt.kitti, opt.kitti2015, opt.shift)
-test_set = get_test_set(opt.data_path, opt.val_list, [576,960], opt.left_right, opt.kitti, opt.kitti2015)
+train_set = get_training_set(opt.data_path, opt.training_list, [opt.crop_height, opt.crop_width], opt.left_right, opt.kitti, opt.kitti2015, opt.argo, opt.shift)
+test_set = get_test_set(opt.data_path, opt.val_list, [576,960], opt.left_right, opt.kitti, opt.kitti2015, opt.argo)
 training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True, drop_last=True)
 testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
 
@@ -106,13 +107,13 @@ def train(epoch):
             if opt.model == 'GANet11':
                 disp1, disp2 = model(input1, input2)
                 disp0 = (disp1 + disp2)/2.
-                if opt.kitti or opt.kitti2015:
+                if opt.kitti or opt.kitti2015 or opt.argo:
                     loss = 0.4 * F.smooth_l1_loss(disp1[mask], target[mask], reduction='mean') + 1.2 * criterion(disp2[mask], target[mask])
                 else:
                     loss = 0.4 * F.smooth_l1_loss(disp1[mask], target[mask], reduction='mean') + 1.2 * F.smooth_l1_loss(disp2[mask], target[mask], reduction='mean')
             elif opt.model == 'GANet_deep':
                 disp0, disp1, disp2 = model(input1, input2)
-                if opt.kitti or opt.kitti2015:
+                if opt.kitti or opt.kitti2015 or opt.argo:
                     loss = 0.2 * F.smooth_l1_loss(disp0[mask], target[mask], reduction='mean') + 0.6 * F.smooth_l1_loss(disp1[mask], target[mask], reduction='mean') +  criterion(disp2[mask], target[mask])
                 else:
                     loss = 0.2 * F.smooth_l1_loss(disp0[mask], target[mask], reduction='mean') + 0.6 * F.smooth_l1_loss(disp1[mask], target[mask], reduction='mean') +  F.smooth_l1_loss(disp2[mask], target[mask], reduction='mean')
@@ -180,7 +181,6 @@ def adjust_learning_rate(optimizer, epoch):
 if __name__ == '__main__':
     error=100
     for epoch in range(1, opt.nEpochs + 1):
-#        if opt.kitti or opt.kitti2015:
         adjust_learning_rate(optimizer, epoch)
         train(epoch)
         is_best = False
@@ -188,8 +188,8 @@ if __name__ == '__main__':
 #        if loss < error:
 #            error=loss
 #            is_best = True
-        if opt.kitti or opt.kitti2015:
-            if epoch%50 == 0 and epoch >= 300:
+        if opt.kitti or opt.kitti2015 or opt.argo:
+            if epoch%25 == 0 and epoch >= 300:
                 save_checkpoint(opt.save_path, epoch,{
                         'epoch': epoch,
                         'state_dict': model.state_dict(),
@@ -209,5 +209,4 @@ if __name__ == '__main__':
             'state_dict': model.state_dict(),
             'optimizer' : optimizer.state_dict(),
         }, is_best)
-
 

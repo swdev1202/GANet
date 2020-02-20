@@ -226,11 +226,51 @@ def load_kitti2015_data(file_path, current_file):
     temp_data[6, :, :] = temp / 256.
     
     return temp_data
+def load_argo_data(file_path, current_file):
+    """ load current file from the list"""
+    lft_img_path = file_path + 'image_2/' + current_file[0: len(current_file) - 1]
+    rgt_img_path = file_path + 'image_3/' + current_file[0: len(current_file) - 1]
+    lft_disp_path = file_path + 'disparity/' + current_file[0: len(current_file) - 1]
+
+    left = Image.open(lft_img_path)
+    right = Image.open(rgt_img_path)
+    disp_left = np.load(lft_disp_path).astype(np.float32)
+
+    size = np.shape(left)
+
+    height = size[0]
+    width = size[1]
+    temp_data = np.zeros([8, height, width], 'float32')
+    left = np.asarray(left)
+    right = np.asarray(right)
+
+    r = left[:,:,0]
+    g = left[:,:,1]
+    b = left[:,:,2]
+    temp_data[0,:,:] = (r - np.mean(r[:])) / np.std(r[:])
+    temp_data[1,:,:] = (g - np.mean(g[:])) / np.std(g[:])
+    temp_data[2,:,:] = (b - np.mean(b[:])) / np.std(b[:])
+
+    r = right[:,:,0]
+    g = right[:,:,1]
+    b = right[:,:,2]
+    temp_data[3,:,:] = (r - np.mean(r[:])) / np.std(r[:])
+    temp_data[4,:,:] = (g - np.mean(g[:])) / np.std(g[:])
+    temp_data[5,:,:] = (b - np.mean(b[:])) / np.std(b[:])
+
+    temp_data[6:7,:,:] = width * 2
+    temp_data[6,:,:] = disp_left[:,:]
+
+    temp = temp_data[6,:,:]
+    temp[temp < 0.1] = width * 2 * 256
+    temp_data[6,:,:] = temp / 256.
+
+    return temp_data
 
 
 
 class DatasetFromList(data.Dataset): 
-    def __init__(self, data_path, file_list, crop_size=[256, 256], training=True, left_right=False, kitti=False, kitti2015=False, shift=0):
+    def __init__(self, data_path, file_list, crop_size=[256, 256], training=True, left_right=False, kitti=False, kitti2015=False, argo=False, shift=0):
         super(DatasetFromList, self).__init__()
         #self.image_filenames = [join(image_dir, x) for x in listdir(image_dir) if is_image_file(x)]
         f = open(file_list, 'r')
@@ -242,6 +282,7 @@ class DatasetFromList(data.Dataset):
         self.left_right = left_right
         self.kitti = kitti
         self.kitti2015 = kitti2015
+        self.argo = argo
         self.shift = shift
 
     def __getitem__(self, index):
@@ -250,6 +291,8 @@ class DatasetFromList(data.Dataset):
             temp_data = load_kitti_data(self.data_path, self.file_list[index])
         elif self.kitti2015: #load kitti2015 dataset
             temp_data = load_kitti2015_data(self.data_path, self.file_list[index])
+        elif self.argo #load argo dataset
+            temp_data = load_argo_data(self.data_path, self.file_list[index])
         else: #load scene flow dataset
             temp_data = load_data(self.data_path, self.file_list[index])
 #        temp_data = load_data(self.data_path,self.file_list[index])
