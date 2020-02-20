@@ -1,5 +1,5 @@
 # Argoverse dataset
-CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=4 \
+CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=1 \
                 --crop_height=240 \
                 --crop_width=528 \
                 --max_disp=192 \
