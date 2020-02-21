@@ -189,12 +189,12 @@ if __name__ == '__main__':
 #            error=loss
 #            is_best = True
         if opt.kitti or opt.kitti2015 or opt.argo:
-            if epoch%25 == 0 and epoch >= 300:
-                save_checkpoint(opt.save_path, epoch,{
-                        'epoch': epoch,
-                        'state_dict': model.state_dict(),
-                        'optimizer' : optimizer.state_dict(),
-                    }, is_best)
+            # if epoch%25 == 0 and epoch >= 300:
+            save_checkpoint(opt.save_path, epoch,{
+                    'epoch': epoch,
+                    'state_dict': model.state_dict(),
+                    'optimizer' : optimizer.state_dict(),
+                }, is_best)
         else:
             if epoch>=8:
                 save_checkpoint(opt.save_path, epoch,{
