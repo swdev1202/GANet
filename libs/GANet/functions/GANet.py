@@ -238,7 +238,7 @@ class Lgf2Function(Function):
 
 class LgaFunction(Function):
     @staticmethod
-    def forward(ctx, input, filters):
+    def forward(ctx, input, filters, radius=1):
         ctx.radius = radius
         assert(input.is_contiguous() == True and filters.is_contiguous() == True)
         with torch.cuda.device_of(input):

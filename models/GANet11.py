@@ -98,38 +98,38 @@ class Feature(nn.Module):
         self.deconv1b = Conv2x(48, 32, deconv=True)
 
     def forward(self, x):
-        x = self.conv_start(x)
-        rem0 = x
-        x = self.conv1a(x)
-        rem1 = x
-        x = self.conv2a(x)
-        rem2 = x
-        x = self.conv3a(x)
-        rem3 = x
-        x = self.conv4a(x)
-        rem4 = x
-        x = self.deconv4a(x, rem3)
-        rem3 = x
+        x = self.conv_start(x) # 1-3
+        rem0 = x # (1/3 H, 1/3 W, 32) / 3
+        x = self.conv1a(x) # 4-5
+        rem1 = x # (1/6 H, 1/6 W, 48) / 5
+        x = self.conv2a(x) # 6-7
+        rem2 = x # (1/12 H, 1/12 W, 64) / 7
+        x = self.conv3a(x) # 8-9
+        rem3 = x # (1/24 H, 1/24 W, 96) / 9
+        x = self.conv4a(x) # 10-11
+        rem4 = x # (1/48 H, 1/48 W, 128) / 11
+        x = self.deconv4a(x, rem3) # 12-13 / concat (9,12)
+        rem3 = x # (1/24 H, 1/24 W, 96) / 13
 
-        x = self.deconv3a(x, rem2)
-        rem2 = x
-        x = self.deconv2a(x, rem1)
-        rem1 = x
-        x = self.deconv1a(x, rem0)
-        rem0 = x
+        x = self.deconv3a(x, rem2) # 14-15 / concat (7,14)
+        rem2 = x # (1/12 H, 1/12 W, 64) / 15
+        x = self.deconv2a(x, rem1) # 16-17 / concat (5,16)
+        rem1 = x # (1/6 H, 1/6 W, 48) / 17
+        x = self.deconv1a(x, rem0) # 18-19 / concat (3,18)
+        rem0 = x # (1/3 H, 1/3 W, 48) / 19
 
-        x = self.conv1b(x, rem1)
-        rem1 = x
-        x = self.conv2b(x, rem2)
-        rem2 = x
-        x = self.conv3b(x, rem3)
-        rem3 = x
-        x = self.conv4b(x, rem4)
+        x = self.conv1b(x, rem1) # 20-21 / concat (17,20)
+        rem1 = x # / 21
+        x = self.conv2b(x, rem2) # 22-23 / concat (15,22)
+        rem2 = x # / 23
+        x = self.conv3b(x, rem3) # 24-25 / concat (13,24)
+        rem3 = x # / 25
+        x = self.conv4b(x, rem4) # 26-27 / concat (11,26)
 
-        x = self.deconv4b(x, rem3)
-        x = self.deconv3b(x, rem2)
-        x = self.deconv2b(x, rem1)
-        x = self.deconv1b(x, rem0)
+        x = self.deconv4b(x, rem3) # 28-29 / concat (25,28)
+        x = self.deconv3b(x, rem2) # 30-31 / concat (23,30)
+        x = self.deconv2b(x, rem1) # 32-33 / concat (21,32)
+        x = self.deconv1b(x, rem0) # 34-35 / concat (19,34)
 
         return x
 

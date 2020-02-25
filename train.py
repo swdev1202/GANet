@@ -196,12 +196,11 @@ if __name__ == '__main__':
                     'optimizer' : optimizer.state_dict(),
                 }, is_best)
         else:
-            if epoch>=8:
-                save_checkpoint(opt.save_path, epoch,{
-                        'epoch': epoch,
-                        'state_dict': model.state_dict(),
-                        'optimizer' : optimizer.state_dict(),
-                    }, is_best)
+            save_checkpoint(opt.save_path, epoch,{
+                    'epoch': epoch,
+                    'state_dict': model.state_dict(),
+                    'optimizer' : optimizer.state_dict(),
+                }, is_best)
 
 
     save_checkpoint(opt.save_path, opt.nEpochs,{
