@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=8 \
+CUDA_VISIBLE_DEVICES=0 python train.py --batchSize=4 \
                 --crop_height=240 \
                 --crop_width=528 \
                 --max_disp=192 \
