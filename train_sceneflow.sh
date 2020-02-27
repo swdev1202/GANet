@@ -6,7 +6,7 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --batchSize=6 \
                 --data_path='/home/011505052/sceneflow/' \
                 --training_list='lists/sceneflow_train.list' \
                 --save_path='./checkpoint/sceneflow' \
-                --resume='/checkpoint/sceneflow_epoch_1.pth' \
+                --resume='./checkpoint/sceneflow_epoch_1.pth' \
                 --model='GANet11' \
                 --nEpochs=11 2>&1 |tee logs/log_train_sceneflow2.txt
 
